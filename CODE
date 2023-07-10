@@ -1,0 +1,122 @@
+-- Table of customer data
+
+-- Initially Displaying the entire dataset 
+SELECT * FROM Customers;
+
+-- to sort the customer by country
+select customerid, 
+customername, 
+country 
+from customers
+order by country;
+
+
+-- to display customer name whose id is between 1 to 30
+select customername 
+from customers
+where customerid between 1 and 30
+order by customerid;
+
+
+-- Display all the infromation which are in country UK anad city london bt contactname
+select   *
+from customers
+where country = 'UK' AND city = 'London'
+order by contactname;
+
+
+ -- similary for country germany and city berlin
+select   *
+from customers
+where country = 'Germany' AND city = 'Berlin'
+order by contactname;
+
+
+-- Display customer Blondel père et fils from france
+select * from customers
+where (customerid between 1 and 20) 
+and city = 'Strasbourg';
+
+
+
+-- Dispaly the countries 'Mexico','Sweden','Canada', 'Austria', 'switzerland' only customer name wise
+SELECT customername, city, country
+FROM Customers
+where country IN('Mexico','Sweden','Canada', 'Austria', 'switzerland')
+
+
+
+-- names of columns and rows is case sensitive i.e why switzerland is not displayed since it is lowercase unlike the table representation
+order by customername;
+
+
+-- Exclude the customers living in  countries , 'Austria', 'switzerland', 'Brazil','UK''Germany','USA','France','Spain','Finland' and display country wise  
+SELECT  city, country
+FROM Customers
+where country NOT IN('Mexico','Sweden','Canada', 'Austria', 'Switzerland','Brazil','UK','Germany','USA','France','Spain','Finland')
+order by country;
+
+
+-- Exclude the customers living in  countries , 'Austria', 'switzerland', 'Brazil','UK'  and display country wise  with a limit of 10
+SELECT  city, country
+FROM Customers
+where country NOT IN('Mexico','Sweden','Canada', 'Austria', 'Switzerland','Brazil','UK')
+order by country
+limit 10;
+
+
+--display customer name and country in upper case
+SELECT  upper(Customername), upper(city) AS customername, city
+from customers
+order by customerid;
+
+-- Table of orderdetails 
+-- display the sum of orders
+select sum(quantity) 
+from orderdetails
+
+
+-- display the sum of orders  
+select sum(orderid)   
+from  orderdetails
+
+
+-- display the sum of orders and quantity intersection
+select  sum(orderid) and sum(quantity)  
+from   orderdetails
+
+
+-- display the quantities which are greater than 80
+SELECT * FROM OrderDetails
+where quantity >= 80
+order by orderdetailid
+
+
+-- Table of categories
+SELECT * FROM Categories
+
+
+-- Display category columns of beverages and grains and cereals
+SELECT * FROM Categories
+where categoryname = 'Grains/Cereals' or categoryname = 'Beverages'
+order by categoryid;
+
+
+-- Display  1st four items of table in alphanumeric order
+SELECT * FROM Categories
+where categoryid between 1 and 4
+order by description;
+
+
+-- Display  1st four items of table in numeric order
+SELECT * FROM Categories
+where categoryid between 1 and 4
+order by categoryid;
+
+-- JOINING OF TABLES
+-- merge two tables namely categories and shippers order by category id in descending order without duplicates
+SELECT * FROM Categories
+union
+SELECT * FROM shippers
+order by categoryid 
+desc;
