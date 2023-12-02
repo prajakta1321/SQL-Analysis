@@ -1,0 +1,199 @@
+# mysql operations
+
+create database mango;
+ use mango;
+ select database();
+ show databases;
+ 
+ create database maggi;
+ use maggi;
+ drop database maggi;
+ 
+ show databases;
+ 
+ create table today(s_id int , s_name char(70) , s_age int);
+ desc today;
+ select * from today;
+ 
+ show tables;
+ create table sunday(s_id int , s_name char (69) , s_age int);
+ desc sunday;
+ 
+ show tables;
+ show columns from today;
+ show columns from sunday;
+ 
+ insert into today values(1 , 'aaa' , 18), (2,"bbb",18), (3,"ccc",19),(4,"ddd",19),(5,"eee",20);
+ 
+select s_id , s_name, s_age from today;
+
+select * from today where s_name="ddd";
+insert into today(s_id, s_name) values (8,"ggg");
+select s_id , s_name from today;
+ 
+ select * from today where s_id = NULL;
+ 
+ alter table today modify s_name varchar(250);
+ desc today;
+ 
+ update today set s_name="mmm" where s_name="ccc";
+ show errors;
+
+# STUDY OF DDL AND DML OPERATIONS ON VIEWS USING SQL
+create database pml;
+use pML;
+
+create table employee(eid int, ename char(30), edob date);
+
+insert into employee values(1,"AAA","1990-05-12") ,(2,"BBB","1991-04-11"),(3,"CCC","1989-06-23");
+
+SELECT * FROM EMPLOYEE ;
+
+CREATE VIEW v1 AS SELECT eid,edob FROM employee;
+SELECT * FROM v1;
+SHOW TABLES;
+
+CREATE VIEW v2 AS SELECT ename, edob FROM employee;
+SELECT * FROM v2;
+DESC V2;
+
+INSERT INTO v1 VALUES (4,"1988-12-09");
+SELECT * FROM v1 ;
+SELECT * FROM employee;
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE v2 SET ename="eee" WHERE ename="AAA";
+
+SELECT * FROM v2;
+SELECT * FROM employee;
+
+DELETE FROM v1 WHERE eid=1;
+SELECT * FROM v1;
+SELECT * FROM employee;
+
+CREATE VIEW v4 AS SELECT eid , ename FROM employee WHERE eid >3;
+SELECT * FROM v4;
+
+ALTER TABLE v2 ADD ename char(30);
+
+ALTER TABLE v2 MODIFY ename char(30);
+ALTER TABLE v2 CHANGE ename ename1 char(30);
+SHOW WARNINGS;
+
+CREATE OR REPLACE VIEW v2 AS SELECT eid, ename FROM employee;
+SELECT * FROM v2 ;
+
+DROP VIEW v2;
+
+CREATE TABLE student(id int, sname char(30), sdob date);
+
+INSERT INTO student (id, sname, sdob) (SELECT eid, ename, edob FROM employee); 
+SELECT * FROM student;
+
+# STUDY OF DATABASE CONSTRAINTS USING SQL.
+
+create database tokyo;
+use tokyo;
+SHOW TABLES;
+
+CREATE TABLE customer (cid int, cname char(30), dop date, primary key(cid));
+DESC customer;
+
+SHOW CREATE TABLE customer;
+
+ALTER TABLE customer drop primary key;
+DESC customer;
+
+ALTER TABLE customer  ADD PRIMARY KEY(cid);
+DESC customer;
+
+ALTER TABLE customer ADD CONSTRAINT pk PRIMARY KEY(cid);
+SHOW ERRORS;
+
+INSERT INTO customer(cname, dop)  VALUES("John Doe", "1998-12-23");
+
+INSERT INTO customer VALUES(1,"John Doe", "1998-12-23");
+SELECT * FROM customer;
+
+CREATE TABLE cus1 (cid int auto_increment, cname char(30), dop date, primary key(cid));
+
+INSERT INTO cus1(cname, dop) VALUES ("prajakta" ,"1998-12-23" ) ,  ("prajakta" ,"1998-12-23");
+
+SELECT * FROM cus1;
+
+INSERT INTO cus1(cid,cname, dop) VALUES (4,"margish" ,"1998-12-23");
+
+INSERT INTO cus1(cname, dop) VALUES ("neha" ,"1998-12-23");
+SELECT * FROM cus1;
+
+CREATE TABLE orders (oid int,id int,oname char(30),FOREIGN KEY(id) REFERENCES customer(cid));
+
+ALTER TABLE orders add constraint fk foreign key(id) references customer(cid);
+SELECT * FROM customer;
+
+INSERT INTO orders VALUES (111, 1, "pendrives");
+
+INSERT INTO orders VALUES (112, 2, "pendrives");
+SHOW ERRORS;
+
+DELETE FROM customer WHERE cid=1;
+
+UPDATE customer SET cid =2 WHERE cid=1;
+
+CREATE TABLE EMPLOYEES (eid int, ename char(30), age int default 20);
+
+INSERT INTO EMPLOYEES values(1,"AAA",19);
+
+INSERT INTO EMPLOYEES(eid,ename) values(1,"BBB");
+SELECT * FROM EMPLOYEES;
+
+ALTER TABLE EMPLOYEES alter age drop default;
+DESC EMPLOYEES;
+
+ALTER TABLE EMPLOYEES ALTER age set default 20;
+DESC EMPLOYEES;
+
+CREATE TABLE payment (pid int check(pid > 1));
+
+INSERT INTO payment VALUES(2);
+SELECT * FROM payment;
+
+ALTER TABLE payment MODIFY pid int;
+SHOW CREATE TABLE payment;
+
+ALTER TABLE payment ADD CONSTRAINT ch check(pid > 1);
+
+CREATE TABLE order2 (id int UNIQUE);
+DESC order2;
+
+INSERT INTO order2 VALUES (1), (1);
+SHOW ERRORS;
+
+INSERT INTO order2 VALUES (1), (2);
+SELECT * FROM order2;
+
+ALTER TABLE order2 ADD oname char(30);
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE order2 set oname = "HOD";
+SELECT * FROM order2;
+
+DELETE FROM order2 where id=2;
+
+ALTER TABLE order2 ADD CONSTRAINT cu UNIQUE(oname);
+SHOW CREATE TABLE order2;
+
+CREATE TABLE order3 (id int NOT NULL);
+
+INSERT INTO order3 VALUES(NULL);
+SHOW ERRORS;
+
+DROP TABLE student;
+
+CREATE TABLE student (id int, marks decimal(4,2));
+
+INSERT INTO student VALUES(1,8888);
+SHOW ERRORS;
+
+INSERT INTO student VALUES(1,88);
+SELECT * FROM student ;
