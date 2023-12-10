@@ -1,0 +1,405 @@
+# korth queries in MySql
+
+create database korth;
+use korth;
+
+create table instructor(i_id int , i_name char(70) , dept_name char(70), salary int);
+
+  
+insert into instructor values(22222, 'Einstein', 'Physics', 95000), 
+(12121, 'Wu', 'Finance', 90000),
+(32343, 'El Said', 'History', 60000),
+(45565, 'Katz', 'Comp. Sci.', 75000),
+(98345, 'Kim', 'Elec. Eng.', 80000),
+(76766, 'Crick', 'Biology', 72000),
+(10101, 'Srinivasan', 'Comp. Sci.', 65000),
+(58583, 'Califieri', 'History', 62000),
+(83821, 'Brandt', 'Comp. Sci.', 92000),
+(15151, 'Mozart' ,'Music', 40000),
+(33456, 'Gold', 'Physics', 87000),
+(76543, 'Singh', 'Finance', 80000);
+
+select * from instructor;
+
+create table department(dept_name char(70) , building char(70) , budget int);
+
+insert into department values('Comp. Sci.', 'Taylor', 100000),
+('Biology', 'Watson', 90000),
+('Elec. Eng.', 'Taylor', 85000),
+('Music', 'Packard', 80000),
+('Finance', 'Painter', 120000),
+('History', 'Painter', 50000),
+('Physics', 'Watson', 70000);
+
+select * from department;
+
+#-- find the names of all instructors in the history department
+select instructor.i_name 
+from instructor
+where instructor.dept_name = 'History';
+
+# find the instructor id and dept name of all instructors associated with a dept with budget of greater than $95,000
+select instructor.i_id , department.dept_name
+from instructor , department
+where instructor.dept_name = department.dept_name and department.budget > 95000;
+
+insert into instructor values (10211, 'Smith', 'Biology', 66000);
+
+# find the names of all instructors
+select i_name from instructor;
+
+# find the department names of all instructor
+select dept_name from instructor;
+
+ # using distinct keyword to remove duplicates
+ select distinct dept_name 
+ from instructor;
+ 
+ # using the all keyword to specify explicitly that duplicates are not allowed
+ select all dept_name
+ from instructor;
+
+# give a 10 % raise to each instructor
+select i_id , i_name, dept_name, salary*1.1
+from instructor;
+
+# Find the names of all instructors in the Computer Science department who have salary greater than $70,000.
+select i_name
+from instructor
+where dept_name = 'Comp. Sci.' and salary > 70000;
+
+# Retrieve the names of all instructors, along with their department names and department building name.
+select i_name , instructor.dept_name , building
+from instructor , department
+where instructor.dept_name = department.dept_name;
+
+create table teaches (i_id int, course_id varchar(255) , sec_id int, semester varchar(255), year int);
+drop table teaches;
+
+create table teaches (i_id int, course_id varchar(255) , sec_id int, semester varchar(255), year int);
+insert into teaches values(10101, 'CS-101', 1, 'Fall' ,2009),
+(10101, 'CS-315', 1, 'Spring', 2010),
+(10101, 'CS-347', 1 ,'Fall', 2009),
+(12121, 'FIN-201', 1 , 'Spring', 2010),
+(15151, 'MU-199', 1, 'Spring', 2010),
+(22222, 'PHY-101', 1, 'Fall', 2009),
+(32343, 'HIS-351', 1, 'Spring', 2010),
+(45565, 'CS-101', 1 , 'Spring', 2010),
+(45565, 'CS-319' ,1, 'Spring', 2010),
+(76766, 'BIO-101', 1, 'Summer', 2009),
+(76766, 'BIO-301', 1, 'Summer', 2010),
+(83821, 'CS-190' ,1, 'Spring', 2009),
+(83821, 'CS-190', 2, 'Spring', 2009),
+(83821, 'CS-319' ,2, 'Spring', 2010),
+(98345, 'EE-181', 1, 'Spring' ,2009);
+
+desc teaches;
+
+# to find instructor names and course identifiers for instructors in the Computer Science department
+select i_name , course_id
+from instructor , teaches
+where instructor.i_id = teaches.id and instructor.dept_name = 'Comp. Sci';
+
+# find all instructors in the university who have taught some course, find their names and the course id, of all courses they taught
+select i_name , course_id
+from instructor , teaches
+where instructor.i_id = teaches.i_id;
+
+# using the above query using natural join
+select i_name , course_id
+from instructor natural join teaches;
+
+# need to make course table as well 
+create table course (course_id varchar(255), title char(50), dept_name char(50), credits int);
+insert into teaches values(10101, 'CS-101', 1, 'Fall' ,2009),
+
+
+# list the names of instructor along with the titles of courses that they teach
+select i_name , title
+from instructor natural join teaches , course
+where teaches.course_id = course.course_id;
+
+select i_name, title
+from instructor natural join course natural join teaches;
+
+# For all instructors in the university who have taught some course find their names and the course id of all course they taught
+select T.i_name, S.course_id
+from instructor as T, teaches as S
+where T.ID= S.ID;
+
+# Find the names of all instructors whose salary is greater than at least one instructor in the Biology department
+select distict T.i_name 
+from instructor as T, instructor as S
+where T.salary > S.salary and S.dept name = ’Biology’;
+
+# find the names of all departments whose buliding name includes the substring 'watson'
+select dept_name
+from department
+where building like '%Watson%';
+
+# list the entire instructor relation in descending order of salary
+select * 
+from instructor
+order by salary
+desc,
+i_name asc;
+
+# find the names of instructors whose salary amounts between 90000 and 100000
+select i_name
+from instructor
+where salary between 90000 and 100000;
+
+create table section (ID int, name char(50),
+dept_name char(50), 
+salary int, 
+course_id  varchar(255) , 
+sec_id int, 
+semester char(50), 
+year int);
+
+
+insert into section values (10101, 'Srinivasan', 'Comp. Sci.', 65000, 'CS-101' ,1, 'Fall', 2009),
+(10101, 'Srinivasan', 'Comp. Sci.', 65000, 'CS-315', 1, 'Spring', 2010),
+(10101, 'Srinivasan' ,'Comp. Sci.', 65000, 'CS-347', 1, 'Fall', 2009),
+(12121, 'Wu', 'Finance', 90000 ,'FIN-201', 1 ,'Spring', 2010),
+(15151, 'Mozart', 'Music', 40000, 'MU-199', 1, 'Spring', 2010),
+(22222, 'Einstein', 'Physics', 95000 ,'PHY-101', 1, 'Fall', 2009),
+(32343, 'El Said', 'History', 60000, 'HIS-351', 1, 'Spring', 2010),
+(45565, 'Katz', 'Comp. Sci.', 75000, 'CS-101', 1, 'Spring', 2010),
+(45565, 'Katz', 'Comp. Sci.', 75000, 'CS-319', 1 ,'Spring', 2010),
+(76766, 'Crick', 'Biology', 72000, 'BIO-101', 1, 'Summer', 2009),
+(76766, 'Crick', 'Biology', 72000, 'BIO-301', 1, 'Summer', 2010),
+(83821, 'Brandt', 'Comp. Sci.', 92000, 'CS-190', 1, 'Spring', 2009),
+(83821, 'Brandt', 'Comp. Sci.', 92000 ,'CS-190', 2, 'Spring', 2009),
+(83821, 'Brandt', 'Comp. Sci.', 92000 ,'CS-319' ,2, 'Spring', 2010),
+(98345, 'Kim', 'Elec. Eng.', 80000, 'EE-181', 1, 'Spring', 2009);
+
+
+# find the set of all courses taught in the fall 2009 semester
+select course_id 
+from section
+where semester = "Fall" and year = 2009;
+
+# find the set of all courses taught in the spring 2010 semester
+select course_id
+from section
+where semester='Spring' and year=2010;
+
+# to find the set of all courses taught either in fall 2009 or in spring 2010 or both
+select course_id
+from section
+where semester='Fall' and year =2009
+union
+select course_id
+from section
+where semester='Spring' and year =2010;
+
+# above same query to retain all duplicates
+select course_id
+from section
+where semester='Fall' and year =2009
+union all
+select course_id
+from section
+where semester='Spring' and year =2010;
+
+# to find the set of all courses taught either in fall 2009 as well as  in spring 2010
+(select course_id
+from section
+where semester='Fall' and year =2009)
+intersect
+(select course_id
+from section
+where semester='Spring' and year =2010);
+
+# to find the set of all courses taught  in fall 2009 as well as  in spring 2010 and retain all duplicates as well
+select course_id
+from section
+where semester='Fall' and year =2009
+intersect all
+select course_id
+from section
+where semester='Spring' and year =2010;
+
+#  to find the set of all courses taught  in fall 2009 but not  in spring 2010
+select course_id
+from section
+where semester='Fall' and year =2009
+except
+select course_id
+from section
+where semester='Spring' and year =2010;
+
+# to find the set of all courses taught  in fall 2009 but not  in spring 2010 and retain all duplicates
+select course_id
+from section
+where semester='Fall' and year =2009
+except all
+select course_id
+from section
+where semester='Spring' and year =2010;
+
+# to find all instructors who appear in the instructor relation with null values for salary
+select i_name
+from instructor 
+where salary is null;
+
+# find the average salary of instructors in the comp sci department
+select avg(salary) 
+from instructor
+where dept_name = 'Comp. Sci.';
+
+# find the total number of instructors who teach a course in the spring 2010 semester
+select count(i_id)
+from teaches
+where semester='Spring' and year = 2010;
+
+# find the average salary in each department
+select dept_name, avg(salary)
+from instructor
+group by dept_name;
+
+# find the average salary of all instructors
+select avg(salary)
+from instructor;
+
+# find the number of instructors in each department who teach a course in the spring 2010 semester
+select dept_name , count (distinct i_id) 
+from instructor natural join teaches
+where semester='Spring' and year=2010
+group by dept_name;
+
+# For each course section offered in 2009, find the average total credits (tot cred) of all students enrolled in the section, 
+# if the section had at least 2 students
+select course_id, semester, year, sec_id, avg (tot_cred)
+from takes natural join student
+where year = 2009
+group by course_id, semester, year, sec_id
+having count (ID) >= 2;
+
+# total all salary amounts from the instructor relation
+select sum(salary)
+from instructor;
+
+# select the names of instructors whose names are neither mozart nor einstein
+select distinct i_name 
+from instructor
+where i_name not in ('Mozart', 'Einstein');
+
+# find the total number of (distinct) students who have taken course sections taught by the instructor with ID 110011
+select count (distinct i_id)
+from takes
+where (course_id, sec_id, semester, year) in (select course_id, sec_id, semester, year
+from teaches
+where teaches.ID= 10101);
+
+# Find the names of all instructors whose salary is greater than at least one instructor in the Biology department
+select i_name
+from instructor
+where salary > some (select salary
+from instructor
+where dept_name = ’Biology’);
+
+select i_name
+from instructor
+where salary > all (select salary
+from instructor
+where dept_name = ’Biology’);
+ 
+select dept i_name
+from instructor
+group by dept_name
+having avg (salary) >= all (select avg (salary)
+from instructor
+group by dept_name);
+
+# Find all courses taught in both the Fall 2009 semester and in the Spring 2010 semester
+select course_id
+from section as S
+where semester = ’Fall’ and year= 2009 and
+exists (select *
+from section as T
+where semester = ’Spring’ and year= 2010 and
+S.course id= T.course id);
+
+# Find all courses that were offered at most once in 2009
+select T.course_id
+from course as T
+where unique (select R.course id
+from section as R
+where T.course id= R.course_id and
+R.year = 2009);
+
+# Delete all tuples in the instructor relation pertaining to instructors in the Finance department.
+SET SQL_SAFE_UPDATES = 0;
+
+delete from instructor 
+where dept_name = 'Finance';
+
+# Delete all instructors with a salary between $13,000 and $15,000.
+delete from instructor
+where salary between 13000 and 15000;
+
+# Delete all tuples in the instructor relation for those instructors associated with a department located in the Watson building.
+delete from instructor
+where dept_name in ( select dept_name
+from department 
+where building = 'Watson');
+
+# to delete the records of all instructors with salary below the average at the university
+delete  from instructor 
+where salary < (select
+ avg(salary) 
+ from instructor);
+
+insert into course values (’CS-437’, ’Database Systems’, ’Comp. Sci.’, 4);
+insert into course (course id, title, dept name, credits)
+values (’CS-437’, ’Database Systems’, ’Comp. Sci.’, 4);
+insert into course (title, course id, credits, dept name)
+values (’Database Systems’, ’CS-437’, 4, ’Comp. Sci.’);
+
+insert into instructor
+select ID, name, dept name, 18000
+from student
+where dept name = ’Music’ and tot cred > 144;
+
+insert into student
+select *
+from student;
+
+insert into student
+values (’3003’, ’Green’, ’Finance’, null);
+
+select student
+from student
+where tot cred > 45;
+
+# Suppose that annual salary increases are being made, and salaries of all instructors are to be increased by 5 percent
+update instructor 
+set salary = salary*1.05;
+
+# If a salary increase is to be paid only to instructors with salary of less than $70,000
+update instructor
+set salary = salary * 1.05
+where salary < 70000;
+
+# Give a 5 percent salary raise to instructors whose salary is less than average
+update instructor
+set salary = salary * 1.05
+where salary < (select avg (salary)
+from instructor);
+
+# all instructors with salary over $100,000 receive a 3 percent raise, whereas all others receive a 5 percent raise
+update instructor
+set salary = salary * 1.03
+where salary > 100000;
+
+update instructor
+set salary = salary * 1.05
+where salary <= 100000;
+
+update instructor
+set salary = case
+when salary <= 100000 then salary * 1.05
+else salary * 1.03
+end
